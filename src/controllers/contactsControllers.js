@@ -18,7 +18,7 @@ export const getAllContacts = async (req, res, next) => {
     try {
         res.status(200).json(
             await contactService.listContacts()
-        );
+        )
     } catch (error) {
         next(new HttpError(400, error.message))
     }
@@ -82,3 +82,22 @@ export const updateContact = async (req, res, next) => {
         next(new HttpError(400, error.message))
     }
 };
+
+
+
+/**
+ * Handles all the controllers for contacts.
+ * @type {RequestHandler}
+ */
+export const toggleFavorite = async (req, res, next) => {
+    try {
+        const updatedContact = await contactService.toggleFavorite(req.params.id);
+        if (!updatedContact) {
+            return res.status(404).json({ message: "Not found" });
+        }
+
+        res.status(200).json(updatedContact);
+    } catch (error) {
+        next(new HttpError(400, error.message))
+    }
+}

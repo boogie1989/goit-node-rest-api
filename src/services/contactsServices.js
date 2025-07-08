@@ -1,16 +1,9 @@
 import { readFile, writeFile } from 'fs/promises';
 import { resolve } from 'path';
 import { v4 as uuid } from 'uuid';
+import { Contact } from '../db/models/contact.js';
 
 const contactsPath = resolve('src', 'db', 'contacts.json');
-
-/**
- * @typedef {Object} Contact
- * @property {string} id - Unique identifier for the contact.
- * @property {string} name - Name of the contact.
- * @property {string} email - Email address of the contact.
- * @property {string} phone - Phone number of the contact.
- */
 
 /**
  * Reads the contacts from the file and returns them as an array of objects.
@@ -18,7 +11,7 @@ const contactsPath = resolve('src', 'db', 'contacts.json');
  * @returns {Promise<Contact[]>} Array of contact objects.
  */
 export async function listContacts() {
-    return JSON.parse(await readFile(contactsPath));
+    return Contact.findAll();
 }
 
 /**
@@ -80,4 +73,14 @@ export async function updateContact(contactId, body) {
     contact.phone = body.phone ?? contact.phone;
     await writeFile(contactsPath, JSON.stringify(contacts));
     return contact;
+}
+
+
+/**
+ * 
+ * @param {string} contactId 
+ * @returns {Promise<Contact | null>} New contact object.
+ */
+export async function toggleFavorite(contactId) {
+    throw new Error("Not implemented");
 }

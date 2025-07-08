@@ -12,7 +12,9 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}/src/app.js",
-            "args": []
+            "runtimeArgs": [
+                "--env-file=.env",
+            ]
         }
     ]
 }
