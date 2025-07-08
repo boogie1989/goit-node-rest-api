@@ -30,9 +30,11 @@ export const getAllContacts = async (req, res, next) => {
  */
 export const getOneContact = async (req, res, next) => {
     try {
-        res.status(200).json(
-            await contactService.getContactById(req.params.id)
-        );
+        const contact = await contactService.getContactById(req.params.id);
+        if (!contact) {
+            return res.status(404).json({ message: "Not found" });
+        }
+        res.status(200).json(contact);
     } catch (error) {
         next(new HttpError(400, error.message))
     }
