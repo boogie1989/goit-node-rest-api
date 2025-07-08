@@ -21,7 +21,7 @@ export const getAllContacts = async (req, res, next) => {
                 await contactService.listContacts()
             )
     } catch (error) {
-        next(HttpError(400, error.message))
+        next(new HttpError(400, error.message))
     }
 };
 
@@ -35,7 +35,7 @@ export const getOneContact = async (req, res, next) => {
             await contactService.getContactById(req.params.id)
         )
     } catch (error) {
-        next(HttpError(400, error.message))
+        next(new HttpError(400, error.message))
     }
 };
 
@@ -49,7 +49,7 @@ export const deleteContact = async (req, res, next) => {
             await contactService.removeContact(req.params.id)
         )
     } catch (error) {
-        next(HttpError(400, error.message))
+        next(new HttpError(400, error.message))
     }
 };
 
@@ -63,7 +63,7 @@ export const createContact = async (req, res, next) => {
             await contactService.addContact(req.body)
         )
     } catch (error) {
-        next(HttpError(400, error.message))
+        next(new HttpError(400, error.message))
     }
 };
 
@@ -80,6 +80,6 @@ export const updateContact = async (req, res, next) => {
 
         res.status(200).json(updatedContact);
     } catch (error) {
-        next(HttpError(400, error.message))
+        next(new HttpError(400, error.message))
     }
 };

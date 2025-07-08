@@ -7,16 +7,15 @@ const messageList = {
 }
 
 /**
- * Creates an instance of HttpError
+ * Class representing an Http error.
  * @param {(400 | 401 | 403 | 404 | 409)} status - The http status error.
  * @param {string} - The error message.
- * @returns {Error} - The HttpError object.
  */
-
-const HttpError = (status, message = messageList[status]) => {
-    const error = new Error(message);
-    error.status = status;
-    return error;
+class HttpError extends Error {
+    constructor(status, message = messageList[status]) {
+        super(message);
+        this.status = status;
+    }
 }
 
 export default HttpError;
