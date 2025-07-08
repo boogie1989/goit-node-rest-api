@@ -16,10 +16,9 @@ import HttpError from '../helpers/HttpError.js';
  */
 export const getAllContacts = async (req, res, next) => {
     try {
-        res.
-            res.status(200).json(
-                await contactService.listContacts()
-            )
+        res.status(200).json(
+            await contactService.listContacts()
+        );
     } catch (error) {
         next(new HttpError(400, error.message))
     }
@@ -33,7 +32,7 @@ export const getOneContact = async (req, res, next) => {
     try {
         res.status(200).json(
             await contactService.getContactById(req.params.id)
-        )
+        );
     } catch (error) {
         next(new HttpError(400, error.message))
     }
@@ -47,7 +46,7 @@ export const deleteContact = async (req, res, next) => {
     try {
         res.status(200).json(
             await contactService.removeContact(req.params.id)
-        )
+        );
     } catch (error) {
         next(new HttpError(400, error.message))
     }
@@ -61,7 +60,7 @@ export const createContact = async (req, res, next) => {
     try {
         res.status(201).json(
             await contactService.addContact(req.body)
-        )
+        );
     } catch (error) {
         next(new HttpError(400, error.message))
     }
