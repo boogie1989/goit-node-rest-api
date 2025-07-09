@@ -1,17 +1,13 @@
-import { readFile, writeFile } from 'fs/promises';
-import { resolve } from 'path';
-import { v4 as uuid } from 'uuid';
 import { Contact } from '../db/models/contact.js';
 
-const contactsPath = resolve('src', 'db', 'contacts.json');
 
 /**
  * Reads the contacts from the file and returns them as an array of objects.
  * 
  * @returns {Promise<Contact[]>} Array of contact objects.
  */
-export async function listContacts() {
-    return Contact.findAll();
+export async function listContacts(ownerId) {
+    return Contact.findAll({ where: { owner: ownerId } });
 }
 
 /**
@@ -42,8 +38,8 @@ export async function removeContact(contactId) {
  * @param {Partial<Contact>} body 
  * @returns {Promise<Contact>} New contact object.
  */
-export async function addContact(body) {
-    return await Contact.create(body);
+export async function addContact(ownerId, body) {
+    return await Contact.create({ ...body, owner: ownerId });
 }
 
 
