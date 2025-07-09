@@ -1,11 +1,86 @@
-import { ContactService } from "../services/contactsServices.js";
+import * as contactService from "../services/contactsServices.js";
+import HttpError from '../helpers/HttpError.js';
 
-export const getAllContacts = (req, res) => { };
+const NOT_FOUND_JSON = { message: "Not found" };
 
-export const getOneContact = (req, res) => { };
+/**
+ * @typedef {(
+*   req: import('express').Request,
+*   res: import('express').Response,
+*   next: import('express').NextFunction
+* ) => any} RequestHandler
+*/
 
-export const deleteContact = (req, res) => { };
 
-export const createContact = (req, res) => { };
+/**
+ * Handles all the controllers for contacts.
+ * @type {RequestHandler}
+ */
+export const getAllContacts = async (req, res, next) => {
+    try {
+        res.status(200).json(
+            await contactService.listContacts()
+        );
+    } catch (error) {
+        next(new HttpError(400, error.message))
+    }
+};
 
-export const updateContact = (req, res) => { };
+/**
+ * Handles all the controllers for contacts.
+ * @type {RequestHandler}
+ */
+export const getOneContact = async (req, res, next) => {
+    try {
+        res.status(200).json(
+            await contactService.getContactById(req.params.id)
+        );
+    } catch (error) {
+        next(new HttpError(400, error.message))
+    }
+};
+
+/**
+ * Handles all the controllers for contacts.
+ * @type {RequestHandler}
+ */
+export const deleteContact = async (req, res, next) => {
+    try {
+        const removedContact = await contactService.removeContact(req.params.id);
+        if (!removedContact) {
+            return res.status(404).json(NOT_FOUND_JSON);
+        }
+        res.status(200).json(removedContact);
+    } catch (error) {
+        next(new HttpError(400, error.message))
+    }
+};
+
+/**
+ * Handles all the controllers for contacts.
+ * @type {RequestHandler}
+ */
+export const createContact = async (req, res, next) => {
+    try {
+        const newContact = await contactService.addContact(req.body);
+        res.status(201).json(newContact);
+    } catch (error) {
+        next(new HttpError(400, error.message))
+    }
+};
+
+/**
+ * Handles all the controllers for contacts.
+ * @type {RequestHandler}
+ */
+export const updateContact = async (req, res, next) => {
+    try {
+        const updatedContact = await contactService.updateContact(req.params.id, req.body);
+        if (!updatedContact) {
+            return res.status(404).json(NOT_FOUND_JSON);
+        }
+        res.status(200).json(updatedContact);
+    } catch (error) {
+        next(new HttpError(400, error.message))
+    }
+};
