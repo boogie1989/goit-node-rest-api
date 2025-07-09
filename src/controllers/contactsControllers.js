@@ -1,6 +1,8 @@
 import * as contactService from "../services/contactsServices.js";
 import HttpError from '../helpers/HttpError.js';
 
+const NOT_FOUND_JSON = { message: "Not found" };
+
 /**
  * @typedef {(
 *   req: import('express').Request,
@@ -44,9 +46,11 @@ export const getOneContact = async (req, res, next) => {
  */
 export const deleteContact = async (req, res, next) => {
     try {
-        res.status(200).json(
-            await contactService.removeContact(req.params.id)
-        );
+        const removedContact = await contactService.removeContact(req.params.id);
+        if (!removedContact) {
+            return res.status(404).json(NOT_FOUND_JSON);
+        }
+        res.status(200).json(removedContact);
     } catch (error) {
         next(new HttpError(400, error.message))
     }
@@ -58,9 +62,8 @@ export const deleteContact = async (req, res, next) => {
  */
 export const createContact = async (req, res, next) => {
     try {
-        res.status(201).json(
-            await contactService.addContact(req.body)
-        );
+        const newContact = await contactService.addContact(req.body);
+        res.status(201).json(newContact);
     } catch (error) {
         next(new HttpError(400, error.message))
     }
@@ -74,9 +77,8 @@ export const updateContact = async (req, res, next) => {
     try {
         const updatedContact = await contactService.updateContact(req.params.id, req.body);
         if (!updatedContact) {
-            return res.status(404).json({ message: "Not found" });
+            return res.status(404).json(NOT_FOUND_JSON);
         }
-
         res.status(200).json(updatedContact);
     } catch (error) {
         next(new HttpError(400, error.message))

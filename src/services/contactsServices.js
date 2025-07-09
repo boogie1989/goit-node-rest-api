@@ -53,9 +53,9 @@ export async function removeContact(contactId) {
  * @param {string} phone 
  * @returns {Promise<Contact>} New contact object.
  */
-export async function addContact(name, email, phone) {
+export async function addContact(body) {
     const contacts = await listContacts();
-    const newContact = { id: uuid(), name, email, phone };
+    const newContact = { id: uuid(), ...body };
     contacts.push(newContact);
     await writeFile(contactsPath, JSON.stringify(contacts));
     return newContact;
