@@ -1,16 +1,9 @@
 import { readFile, writeFile } from 'fs/promises';
 import { resolve } from 'path';
 import { v4 as uuid } from 'uuid';
+import { Contact } from '../db/models/contact.js';
 
 const contactsPath = resolve('src', 'db', 'contacts.json');
-
-/**
- * @typedef {Object} Contact
- * @property {string} id - Unique identifier for the contact.
- * @property {string} name - Name of the contact.
- * @property {string} email - Email address of the contact.
- * @property {string} phone - Phone number of the contact.
- */
 
 /**
  * Reads the contacts from the file and returns them as an array of objects.
@@ -18,7 +11,7 @@ const contactsPath = resolve('src', 'db', 'contacts.json');
  * @returns {Promise<Contact[]>} Array of contact objects.
  */
 export async function listContacts() {
-    return JSON.parse(await readFile(contactsPath));
+    return Contact.findAll();
 }
 
 /**
@@ -27,7 +20,7 @@ export async function listContacts() {
  * @returns {Promise<Contact | null>} Contact object or null if not found.
  */
 export async function getContactById(contactId) {
-    return (await listContacts()).find(contact => contact.id === contactId);
+    return Contact.findByPk(contactId);
 }
 
 /**
@@ -36,29 +29,21 @@ export async function getContactById(contactId) {
  * @returns {Promise<Contact | null>} Removed contact object or null if not found.
  */
 export async function removeContact(contactId) {
-    const contacts = await listContacts();
-    const index = contacts.findIndex(contact => contact.id === contactId);
-    if (index === -1) {
+    const contact = await getContactById(contactId);
+    if (!contact) {
         return null;
     }
-    const removedContact = contacts.splice(index, 1)[0];
-    await writeFile(contactsPath, JSON.stringify(contacts));
-    return removedContact;
+    await contact.destroy();
+    return contact;
 }
 
 /**
  * 
- * @param {string} name 
- * @param {string} email 
- * @param {string} phone 
+ * @param {Partial<Contact>} body 
  * @returns {Promise<Contact>} New contact object.
  */
 export async function addContact(body) {
-    const contacts = await listContacts();
-    const newContact = { id: uuid(), ...body };
-    contacts.push(newContact);
-    await writeFile(contactsPath, JSON.stringify(contacts));
-    return newContact;
+    return await Contact.create(body);
 }
 
 
@@ -69,15 +54,21 @@ export async function addContact(body) {
  * @returns {Promise<Contact | null>} New contact object.
  */
 export async function updateContact(contactId, body) {
-    const contacts = await listContacts();
-    const index = contacts.findIndex(contact => contact.id === contactId);
-    if (index === -1) {
+    await Contact.update(body, { where: { id: contactId } });
+    return await getContactById(contactId);
+}
+
+
+/**
+ * 
+ * @param {string} contactId 
+ * @returns {Promise<Contact | null>} New contact object.
+ */
+export async function toggleFavorite(contactId) {
+    const contact = await getContactById(contactId);
+    if (!contact) {
         return null;
     }
-    const contact = contacts[index];
-    contact.name = body.name ?? contact.name;
-    contact.email = body.email ?? contact.email;
-    contact.phone = body.phone ?? contact.phone;
-    await writeFile(contactsPath, JSON.stringify(contacts));
+    await contact.update({ favorite: !contact.favorite });
     return contact;
 }

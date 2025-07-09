@@ -20,7 +20,7 @@ export const getAllContacts = async (req, res, next) => {
     try {
         res.status(200).json(
             await contactService.listContacts()
-        );
+        )
     } catch (error) {
         next(new HttpError(400, error.message))
     }
@@ -32,9 +32,11 @@ export const getAllContacts = async (req, res, next) => {
  */
 export const getOneContact = async (req, res, next) => {
     try {
-        res.status(200).json(
-            await contactService.getContactById(req.params.id)
-        );
+        const contact = await contactService.getContactById(req.params.id);
+        if (!contact) {
+            return res.status(404).json(NOT_FOUND_JSON);
+        }
+        res.status(200).json(contact);
     } catch (error) {
         next(new HttpError(400, error.message))
     }
@@ -62,8 +64,10 @@ export const deleteContact = async (req, res, next) => {
  */
 export const createContact = async (req, res, next) => {
     try {
-        const newContact = await contactService.addContact(req.body);
-        res.status(201).json(newContact);
+
+        res.status(201).json(
+            await contactService.addContact(req.body)
+        );
     } catch (error) {
         next(new HttpError(400, error.message))
     }
@@ -84,3 +88,22 @@ export const updateContact = async (req, res, next) => {
         next(new HttpError(400, error.message))
     }
 };
+
+
+
+/**
+ * Handles all the controllers for contacts.
+ * @type {RequestHandler}
+ */
+export const toggleFavorite = async (req, res, next) => {
+    try {
+        const updatedContact = await contactService.toggleFavorite(req.params.id);
+        if (!updatedContact) {
+            return res.status(404).json(NOT_FOUND_JSON);
+        }
+
+        res.status(200).json(updatedContact);
+    } catch (error) {
+        next(new HttpError(400, error.message))
+    }
+}
