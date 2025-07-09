@@ -1,6 +1,8 @@
 import * as contactService from "../services/contactsServices.js";
 import HttpError from '../helpers/HttpError.js';
 
+const NOT_FOUND_JSON = { message: "Not found" };
+
 /**
  * @typedef {(
 *   req: import('express').Request,
@@ -32,7 +34,7 @@ export const getOneContact = async (req, res, next) => {
     try {
         const contact = await contactService.getContactById(req.params.id);
         if (!contact) {
-            return res.status(404).json({ message: "Not found" });
+            return res.status(404).json(NOT_FOUND_JSON);
         }
         res.status(200).json(contact);
     } catch (error) {
@@ -60,6 +62,7 @@ export const deleteContact = async (req, res, next) => {
  */
 export const createContact = async (req, res, next) => {
     try {
+
         res.status(201).json(
             await contactService.addContact(req.body)
         );
@@ -76,7 +79,7 @@ export const updateContact = async (req, res, next) => {
     try {
         const updatedContact = await contactService.updateContact(req.params.id, req.body);
         if (!updatedContact) {
-            return res.status(404).json({ message: "Not found" });
+            return res.status(404).json(NOT_FOUND_JSON);
         }
 
         res.status(200).json(updatedContact);
@@ -95,7 +98,7 @@ export const toggleFavorite = async (req, res, next) => {
     try {
         const updatedContact = await contactService.toggleFavorite(req.params.id);
         if (!updatedContact) {
-            return res.status(404).json({ message: "Not found" });
+            return res.status(404).json(NOT_FOUND_JSON);
         }
 
         res.status(200).json(updatedContact);
