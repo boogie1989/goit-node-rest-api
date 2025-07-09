@@ -17,6 +17,7 @@ try {
   });
 } catch (error) {
   console.log(error.message);
+  console.log('SOME ERROR');
   process.exit(1);
 }
 
