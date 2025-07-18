@@ -13,8 +13,9 @@
             ],
             "program": "${workspaceFolder}/src/app.js",
             "runtimeArgs": [
-                "--env-file=.env",
-            ]
+                "--env-file=.env.example"
+            ],
+            "args": []
         }
     ]
 }
