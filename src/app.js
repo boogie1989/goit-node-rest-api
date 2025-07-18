@@ -5,6 +5,8 @@ import cors from "cors";
 import contactsRouter from "./routes/contactsRouter.js";
 import authRouter from "./routes/usersRouter.js";
 import { sequelize } from "./db/database.js";
+import { HttpError, ServerError } from "./errors/httpError.js";
+
 
 const app = express();
 
@@ -25,17 +27,23 @@ try {
 app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
+app.use('/avatars', express.static('uploads'));
 
-app.use("/api/contacts", contactsRouter);
-app.use("/api/users", authRouter);
 
+const router = express.Router();
+router.use("/contacts", contactsRouter);
+router.use("/auth", authRouter);
+
+app.use("/api", router);
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });
 });
 
 app.use((err, req, res, next) => {
-  const { status = 500, message = "Server error" } = err;
-  res.status(status).json({ message });
+  if (!(err instanceof HttpError)) {
+    err = new ServerError(err.message);
+  }
+  res.status(err.statusCode).json(err);
 });
 
 app.listen(3000, () => {

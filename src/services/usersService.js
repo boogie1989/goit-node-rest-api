@@ -1,12 +1,14 @@
 import { User } from "../db/models/user.js";
 import { hashPassword, comparePassword } from "../helpers/hashPassword.js";
 import { createToken } from "../helpers/token.js";
+import { generateAvatar } from "../helpers/avatars.js";
 
 export function prepareUserResponseBody(user) {
     return {
         user: {
             email: user.email,
             subscription: user.subscription,
+            avatarURL: user.avatarURL,
         }
     };
 }
@@ -20,7 +22,8 @@ export function prepareUserResponseBody(user) {
 export async function register(body) {
     const user = await User.create({
         ...body,
-        password: await hashPassword(body.password)
+        password: await hashPassword(body.password),
+        avatarURL: generateAvatar(body.email),
     });
     return prepareUserResponseBody(user);
 }
@@ -31,7 +34,7 @@ export async function register(body) {
  */
 export async function login(body) {
     const user = await User.findOne({ where: { email: body.email } });
-    if (await comparePassword(body.password, user.password)) {
+    if (user && await comparePassword(body.password, user.password)) {
         const token = await createToken({ email: user.email });
         user.token = token;
         await user.save();
@@ -60,4 +63,16 @@ export async function logout(user) {
  */
 export async function current() {
     throw new Error("Not implemented");
+}
+
+
+/**
+ * 
+ * @returns {Promise<string>} Contact object or null if not found.
+ */
+export async function updateAvatar(userId, file) {
+    const user = await User.findOne({ where: { id: userId } });
+    user.avatarURL = file.filename;
+    await user.save();
+    return user.avatarURL;
 }

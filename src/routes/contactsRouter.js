@@ -10,20 +10,21 @@ import {
 import validateBody from "../helpers/validateBody.js";
 import { createContactSchema, updateContactSchema } from "../schemas/contactsSchemas.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
-import { handlerErrorCatcher } from "../helpers/handlerErrorCatcher.js";
+import { errorHandler } from "../helpers/errorHandler.js";
+
 
 export default express.Router()
-  .get("/", authMiddleware, handlerErrorCatcher(getAllContactsHandler))
-  .get("/:id", authMiddleware, handlerErrorCatcher(getOneContactHandler))
-  .delete("/:id", authMiddleware, handlerErrorCatcher(deleteContactHandler))
+  .get("/", authMiddleware, errorHandler(getAllContactsHandler))
+  .get("/:id", authMiddleware, errorHandler(getOneContactHandler))
+  .delete("/:id", authMiddleware, errorHandler(deleteContactHandler))
   .post("/",
     validateBody(createContactSchema),
     authMiddleware,
-    handlerErrorCatcher(createContactHandler)
+    errorHandler(createContactHandler)
   )
   .put("/:id",
     validateBody(updateContactSchema),
     authMiddleware,
-    handlerErrorCatcher(updateContactHandler)
+    errorHandler(updateContactHandler)
   )
-  .patch("/:id/favorite", authMiddleware, handlerErrorCatcher(toggleFavoriteHandler));
+  .patch("/:id/favorite", authMiddleware, errorHandler(toggleFavoriteHandler));

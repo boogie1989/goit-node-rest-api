@@ -15,8 +15,8 @@ export async function listContacts(ownerId) {
  * @param {string} contactId 
  * @returns {Promise<Contact | null>} Contact object or null if not found.
  */
-export async function getContactById(contactId) {
-    return Contact.findByPk(contactId);
+export async function getContactById(ownerId, contactId) {
+    return Contact.findOne({ where: { id: contactId, owner: ownerId } });
 }
 
 /**
@@ -24,8 +24,8 @@ export async function getContactById(contactId) {
  * @param {string} contactId 
  * @returns {Promise<Contact | null>} Removed contact object or null if not found.
  */
-export async function removeContact(contactId) {
-    const contact = await getContactById(contactId);
+export async function removeContact(ownerId, contactId) {
+    const contact = await getContactById(ownerId, contactId);
     if (!contact) {
         return null;
     }
@@ -49,9 +49,9 @@ export async function addContact(ownerId, body) {
  * @param {Partial<Contact>} body 
  * @returns {Promise<Contact | null>} New contact object.
  */
-export async function updateContact(contactId, body) {
-    await Contact.update(body, { where: { id: contactId } });
-    return await getContactById(contactId);
+export async function updateContact(ownerId, contactId, body) {
+    await Contact.update(body, { where: { id: contactId, owner: ownerId } });
+    return await getContactById(ownerId, contactId);
 }
 
 
@@ -60,8 +60,8 @@ export async function updateContact(contactId, body) {
  * @param {string} contactId 
  * @returns {Promise<Contact | null>} New contact object.
  */
-export async function toggleFavorite(contactId) {
-    const contact = await getContactById(contactId);
+export async function toggleFavorite(ownerId, contactId) {
+    const contact = await getContactById(ownerId, contactId);
     if (!contact) {
         return null;
     }

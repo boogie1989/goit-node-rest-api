@@ -1,10 +1,10 @@
-import HttpError from "./HttpError.js";
+import { BadRequestError } from "../errors/httpError.js";
 
 const validateBody = (schema) => {
   const func = (req, _, next) => {
     const { value, error } = schema.validate(req.body);
     if (error) {
-      next(new HttpError(400, error.message));
+      return next(new BadRequestError(error.message));
     }
     req.body = value;
     next();

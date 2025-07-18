@@ -1,8 +1,6 @@
 import * as contactService from "../services/contactsServices.js";
-import HttpError from '../helpers/HttpError.js';
+import { NotFoundError } from '../errors/httpError.js';
 
-
-const NOT_FOUND_JSON = { message: "Not found" };
 
 /**
  * Handles all the controllers for contacts.
@@ -19,9 +17,9 @@ export const getAllContactsHandler = async (req, res) => {
  * @type {RequestHandler}
  */
 export const getOneContactHandler = async (req, res) => {
-    const contact = await contactService.getContactById(req.params.id);
+    const contact = await contactService.getContactById(req.user.id, req.params.id);
     if (!contact) {
-        return res.status(404).json(NOT_FOUND_JSON);
+        throw new NotFoundError();
     }
     res.status(200).json(contact);
 };
@@ -31,9 +29,9 @@ export const getOneContactHandler = async (req, res) => {
  * @type {RequestHandler}
  */
 export const deleteContactHandler = async (req, res) => {
-    const removedContact = await contactService.removeContact(req.params.id);
+    const removedContact = await contactService.removeContact(req.user.id, req.params.id);
     if (!removedContact) {
-        return res.status(404).json(NOT_FOUND_JSON);
+        throw new NotFoundError();
     }
     res.status(200).json(removedContact);
 };
@@ -53,9 +51,9 @@ export const createContactHandler = async (req, res) => {
  * @type {RequestHandler}
  */
 export const updateContactHandler = async (req, res) => {
-    const updatedContact = await contactService.updateContact(req.params.id, req.body);
+    const updatedContact = await contactService.updateContact(req.user.id, req.params.id, req.body);
     if (!updatedContact) {
-        return res.status(404).json(NOT_FOUND_JSON);
+        throw new NotFoundError();
     }
     res.status(200).json(updatedContact);
 };
@@ -67,9 +65,9 @@ export const updateContactHandler = async (req, res) => {
  * @type {RequestHandler}
  */
 export const toggleFavoriteHandler = async (req, res, next) => {
-    const updatedContact = await contactService.toggleFavorite(req.params.id);
+    const updatedContact = await contactService.toggleFavorite(req.user.id, req.params.id);
     if (!updatedContact) {
-        return res.status(404).json(NOT_FOUND_JSON);
+        throw new NotFoundError();
     }
 
     res.status(200).json(updatedContact);

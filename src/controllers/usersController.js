@@ -1,5 +1,6 @@
 import { UniqueConstraintError } from "sequelize";
 import * as userService from "../services/usersService.js";
+import { BadRequestError, ConflictError, UnauthorizedError } from "../errors/httpError.js";
 
 
 /**
@@ -12,9 +13,7 @@ export const registerHandler = async (req, res) => {
         res.status(201).json(user);
     } catch (error) {
         if (error instanceof UniqueConstraintError) {
-            res.status(409).json({
-                "message": "Email in use"
-            });
+            throw new ConflictError("Email in use");
         }
         throw error;
     }
@@ -28,9 +27,7 @@ export const registerHandler = async (req, res) => {
 export const loginHandler = async (req, res) => {
     const user = await userService.login(req.body);
     if (!user) {
-        return res.status(401).json({
-            "message": "Email or password is wrong"
-        });
+        throw new UnauthorizedError("Email or password is wrong");
     }
     res.status(200).json(user);
 };
@@ -51,4 +48,14 @@ export const logoutHandler = async (req, res) => {
  */
 export const currentHandler = async (req, res) => {
     res.status(200).json(userService.prepareUserResponseBody(req.user));
+};
+
+/**
+ * Handles all the controllers for contacts.
+ * @type {RequestHandler}
+ */
+export const updateAvatarHandler = async (req, res) => {
+    res.status(200).json({
+        avatarURL: await userService.updateAvatar(req.user.id, req.file)
+    });
 };
