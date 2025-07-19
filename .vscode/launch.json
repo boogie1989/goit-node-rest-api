@@ -13,9 +13,25 @@
             ],
             "program": "${workspaceFolder}/src/app.js",
             "runtimeArgs": [
-                "--env-file=.env.example"
+                "--env-file=.env"
             ],
             "args": []
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Jest: current file",
+            //"env": { "NODE_ENV": "test" },
+            "program": "${workspaceFolder}/node_modules/.bin/jest",
+            "args": [
+                "${fileBasenameNoExtension}",
+                "--config",
+                "jest.config.js"
+            ],
+            "console": "integratedTerminal",
+            "windows": {
+                "program": "${workspaceFolder}/node_modules/jest/bin/jest"
+            }
         }
     ]
 }
