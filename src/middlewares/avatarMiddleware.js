@@ -1,6 +1,6 @@
 import multer from 'multer';
 
-export const AVATARS_PATH = 'uploads/';
+export const AVATARS_PATH = 'public/avatars/';
 
 export const uploadAvatarMiddleware = multer({
     storage: multer.diskStorage({

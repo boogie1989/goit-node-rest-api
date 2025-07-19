@@ -27,7 +27,7 @@ export async function createApp({ cleanDatabase = false } = {}) {
     app.use(morgan("tiny"));
     app.use(cors());
     app.use(express.json());
-    app.use('/avatars', express.static('uploads'));
+    app.use('/public', express.static('public'));
 
 
     const router = express.Router();
