@@ -15,6 +15,13 @@ export const User = sequelize.define(
         allowNull: false,
         unique: true,
     },
+    verify: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+    },
+    verificationToken: {
+        type: DataTypes.STRING,
+    },
     subscription: {
         type: DataTypes.ENUM,
         values: subscription,

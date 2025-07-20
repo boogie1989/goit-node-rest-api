@@ -1,10 +1,11 @@
 import { UniqueConstraintError } from "sequelize";
 import { ConflictError, UnauthorizedError } from "../errors/httpError.js";
 import { UserService } from "../services/userService.js";
+import { NotFoundError } from "../errors/httpError.js";
+
 
 export class UserController {
     /**
-     * Handles all the controllers for contacts.
      * @type {UserService}
      */
     #userSercise;
@@ -18,7 +19,6 @@ export class UserController {
     }
 
     /**
-     * Handles all the controllers for contacts.
      * @type {RequestHandler}
      */
     register = async (req, res) => {
@@ -34,7 +34,6 @@ export class UserController {
     }
 
     /**
-     * Handles all the controllers for contacts.
      * @type {RequestHandler}
      */
     login = async (req, res) => {
@@ -46,7 +45,6 @@ export class UserController {
     }
 
     /**
-     * Handles all the controllers for contacts.
      * @type {RequestHandler}
      */
     logout = async (req, res) => {
@@ -55,7 +53,6 @@ export class UserController {
     }
 
     /**
-     * Handles all the controllers for contacts.
      * @type {RequestHandler}
      */
     current = async (req, res) => {
@@ -63,13 +60,39 @@ export class UserController {
     }
 
     /**
-     * Handles all the controllers for contacts.
      * @type {RequestHandler}
      */
     updateAvatar = async (req, res) => {
         res.status(200).json({
             avatarURL: await this.#userSercise.updateAvatar(req.user.id, req.file)
         });
+    }
+
+    /**
+     * @type {RequestHandler}
+     */
+    sendVerificationEmail = async (req, res) => {
+        const { userNotExist, alreadyPassed } = await this.#userSercise.sendVerificationEmail(req.body.email);
+        if (userNotExist) {
+            throw new NotFoundError("User not found");
+        }
+        if (alreadyPassed) {
+            throw new BadRequestError("Verification has already been passed");
+        }
+        res.status(200).json({ message: "Verification email sent" });
+    }
+
+    /**
+     * @type {RequestHandler}
+     */
+    verifyEmail = async (req, res) => {
+        const token = req.params.verificationToken;
+        const verified = await this.#userSercise.verifyEmail(token);
+        if (!verified) {
+            throw new NotFoundError("User not found");
+        }
+
+        res.status(200).json({ message: "Verification successful" });
     }
 }
 

@@ -17,7 +17,6 @@ export class ContactController {
     }
 
     /**
-     * Handles all the controllers for contacts.
      * @type {RequestHandler}
      */
     getAll = async (req, res) => {
@@ -27,7 +26,6 @@ export class ContactController {
     }
 
     /**
-     * Handles all the controllers for contacts.
      * @type {RequestHandler}
      */
     getOne = async (req, res) => {
@@ -39,7 +37,6 @@ export class ContactController {
     }
 
     /**
-     * Handles all the controllers for contacts.
      * @type {RequestHandler}
      */
     create = async (req, res) => {
@@ -49,7 +46,6 @@ export class ContactController {
     }
 
     /**
-     * Handles all the controllers for contacts.
      * @type {RequestHandler}
      */
     update = async (req, res) => {
@@ -61,7 +57,6 @@ export class ContactController {
     }
 
     /**
-     * Handles all the controllers for contacts.
      * @type {RequestHandler}
      */
     delete = async (req, res) => {
@@ -73,7 +68,6 @@ export class ContactController {
     }
 
     /**
-     * Handles all the controllers for contacts.
      * @type {RequestHandler}
      */
     toggleFavorite = async (req, res) => {
