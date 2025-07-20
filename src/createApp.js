@@ -7,7 +7,6 @@ import authRouter from "./routes/usersRouter.js";
 import { sequelize } from "./db/database.js";
 import { HttpError, ServerError } from "./errors/httpError.js";
 
-
 export async function createApp({ cleanDatabase = false } = {}) {
     const app = express();
 
